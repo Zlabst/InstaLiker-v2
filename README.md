@@ -1,2 +1,3 @@
 # InstaLiker-v2
-Project works with site Instagram.com. Automatic press likes by entering tags
+Проект для автоматического проставления "лайков" в Instagram'e.
+Стек технологий: C#, WinForms, Awesomium - HTML UI Engine, MaterialSkin, Entity Framework
