@@ -18,7 +18,13 @@ namespace InstaLiker.Models
         {
             _dataContext = dataContext;
             _mainView = mainView;
-            _htmlParser = new HtmlParser();
+            _htmlParser = new HtmlParser(mainView.MainThread, int.Parse(GetSettMinWaitAfterLike), int.Parse(GetSettPeriodMinTimer),
+                GetSourceTags, mainView.WebBrowser);
+        }
+
+        public void StartParser()
+        {
+            _htmlParser.Start();
         }
 
         #region DataContext

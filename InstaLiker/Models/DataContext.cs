@@ -17,19 +17,26 @@ namespace InstaLiker.Models
         public DbSet<Tags> Tags { get; set; }
         public DbSet<TagsStatistic> Statistics { get; set; }
         public DbSet<MainSettings> MainSettings { get; set; }
-
-        public readonly DataTable SourceTags;
+        public DataTable SourceTags; // таблица с данными для грида
 
         // в конструкторе - имя базы
         public DataContext() : base("DBTags")
         {
+            Database.Initialize(true);
+
+            CreateSupTables();
+        }
+
+        private void CreateSupTables()
+        {
             SourceTags = new DataTable();
-            SourceTags.Columns.Add("TagId", typeof (int));
+            SourceTags.Columns.Add("TagId", typeof(int));
             SourceTags.Columns.Add("TagName", typeof(string));
-            SourceTags.Columns.Add("CountPerDate", typeof (int));
-            SourceTags.PrimaryKey = new[] {SourceTags.Columns["TagId"]};
+            SourceTags.Columns.Add("CountPerDate", typeof(int));
+            SourceTags.PrimaryKey = new[] { SourceTags.Columns["TagId"] };
             
-            FillSourceTags();
+            AddDefaultSettings();
+            SyncSourceTabTags();
         }
 
         // настройка - ожидание после лайка (в минутах)
@@ -58,7 +65,7 @@ namespace InstaLiker.Models
             Tags.Add(new Tags {TagName = tagName});
             SaveChanges();
 
-            FillSourceTags();
+            SyncSourceTabTags();
         }
 
         // удаление тега
@@ -72,12 +79,14 @@ namespace InstaLiker.Models
             Tags.Remove(tag);
             SaveChanges();
 
-            FillSourceTags();
+            SyncSourceTabTags();
         }
 
         // актуализация локальной таблицы для грида
-        public void FillSourceTags()
+        private void SyncSourceTabTags()
         {
+            var listCountPerDay = Statistics.Where(s => s.Date == DateTime.Today).ToList();
+
             foreach (Tags item in Tags)
                 if (SourceTags.Rows.Find(item.TagId) == null)
                     SourceTags.Rows.Add(item.TagId, item.TagName);
@@ -86,29 +95,27 @@ namespace InstaLiker.Models
                 if (Tags.Find(item["TagId"]) == null)
                     item.Delete();
 
-            // TODO
-            //foreach (DataRow item in DtTags.Select())
-            //{
-            //    if (Statistics.Find(DateTime.Now))
-            //}
+            foreach (DataRow item in SourceTags.Select())
+            {
+                var count = listCountPerDay.FirstOrDefault(s => s.Id == (int)item["TagId"]);
+
+                if (count != null)
+                    item["CountPerDate"] = count.CountPerDate;
+            }
 
             SourceTags.AcceptChanges();
         }
 
-        // TODO delete
-        public void Test()
+        // при первом запуске приложение - добавление настроек по умолчанию
+        private void AddDefaultSettings()
         {
-            using (var db = new DataContext())
-            {
+            if (MainSettings.Find("MinWaitAfterLike") == null)
+                MainSettings.Add(new MainSettings {SetName = "MinWaitAfterLike", SetValue = "1"});
 
-                db.MainSettings.Add(new MainSettings { SetName = "MinWaitAfterLike", SetValue = "1" });
-                db.MainSettings.Add(new MainSettings { SetName = "PeriodMinTimer", SetValue = "5" });
+            if (MainSettings.Find("PeriodMinTimer") == null)
+                MainSettings.Add(new MainSettings { SetName = "PeriodMinTimer", SetValue = "15" });
 
-                db.Tags.Add(new Tags { TagName = "Книжныйчервь" });
-                db.Tags.Add(new Tags { TagName = "Книголюб" });
-
-                db.SaveChanges();
-            }
+            SaveChanges();
         }
     }
 }

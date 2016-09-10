@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Awesomium.Windows.Forms;
 using InstaLiker.Models;
 
 namespace InstaLiker.Forms
@@ -12,6 +13,11 @@ namespace InstaLiker.Forms
         public ISynchronizeInvoke MainThread
         {
             get { return this; }
+        }
+
+        public WebControl WebBrowser
+        {
+            get { return wcBrowser; }
         }
 
         public Main()
@@ -65,6 +71,11 @@ namespace InstaLiker.Forms
                 return;
 
             _facade.DeleteTag((int)gvTags.SelectedCells[0].Value);
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            _facade.StartParser();
         }
     }
 }
