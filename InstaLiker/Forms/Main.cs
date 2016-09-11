@@ -36,6 +36,21 @@ namespace InstaLiker.Forms
                 lblStatusBar.Text = message;
         }
 
+        public void RefreshBrowser()
+        {
+            if (InvokeRequired)
+                Invoke(new Action(() =>
+                {
+                    wcBrowser.Refresh();
+                    WaitLoading();
+                }));
+            else
+            {
+                wcBrowser.Refresh();
+                WaitLoading();
+            }
+        }
+
         public void GetHtmlDocument(out string htmlDocument)
         {
             htmlDocument = GetStringHtmlDoc();

@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace InstaLiker.Models
@@ -49,6 +50,7 @@ namespace InstaLiker.Models
         public event Action<string> OnSendMessage = s => { };
         public event Action<int> OnPressLike = i => { };
         public event Action<bool> OnStartStopMainProc = b => { };
+        public event Action OnRefresh = () => { }; 
 
         // запуск таймера
         public void Start()
@@ -56,7 +58,9 @@ namespace InstaLiker.Models
             _activeThreads = 0;
             IsCancel = false;
 
-            if (!IsAllCheck())
+            CheckInternetConnection();
+
+            if (!IsUserActive())
                 return;
 
             OnSendMessage.Invoke("Работает");
@@ -99,13 +103,11 @@ namespace InstaLiker.Models
         // основная процедура
         private void MainProcedure()
         {
-            if (!IsAllCheck())
-                return;
+            CheckInternetConnection();
 
             foreach (var tagRow in _sourceData.Select())
             {
-                if (!IsAllCheck())
-                    return;
+                CheckInternetConnection();
 
                 _activeTag = (int) tagRow["TagId"];
 
@@ -125,8 +127,7 @@ namespace InstaLiker.Models
         {
             foreach (var url in _urlsByTag)
             {
-                if (!IsAllCheck())
-                    return;
+                CheckInternetConnection();
 
                 var uriForLike = new Uri(PrefixUrl + url);
 
@@ -155,7 +156,7 @@ namespace InstaLiker.Models
         {
             _urlsByTag = new List<string>();
 
-            const string regexPatt = @"{""code"": ""(?'url'.+?)"", ""date"":";
+            const string regexPatt = @"{""code"": ""(?'url'.+?)"",";
 
             var mcRes = Regex.Matches(_htmlDocument, regexPatt, RegexOptions.IgnoreCase);
 
@@ -171,29 +172,27 @@ namespace InstaLiker.Models
 
             const string regexPatt = @"<a class=""_soakw _vbtk2 coreSpriteDesktopNavProfile"" href=""";
 
-            return Regex.IsMatch(_htmlDocument, regexPatt, RegexOptions.IgnoreCase);
-        }
-
-        // все проверки доступа к сайту и интернету
-        private bool IsAllCheck()
-        {
-            bool result;
-
-            result = IsOnline();
-            if (!result)
-            {
-                OnSendMessage.Invoke("Нет связи с Instagram");
-                return false;
-            }
-
-            result = IsUserActive();
-            if (!result)
+            if (Regex.IsMatch(_htmlDocument, regexPatt, RegexOptions.IgnoreCase))
+                return true;
+            else
             {
                 OnSendMessage.Invoke("Не введён логин");
                 return false;
             }
+        }
 
-            return true;
+        // постоянная проверка связи
+        private void CheckInternetConnection()
+        {
+            while (!IsOnline())
+            {
+                Application.DoEvents();
+                OnSendMessage.Invoke("Нет связи с интернетом или сайтом");
+                OnRefresh.Invoke();
+                Thread.Sleep(20000);
+            }
+
+            OnSendMessage.Invoke("Работает");
         }
 
         // проверка или пингуется сайт

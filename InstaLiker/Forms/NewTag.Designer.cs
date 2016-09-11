@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewTag));
             this.tbTagName = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.btnAddNewTag = new MaterialSkin.Controls.MaterialFlatButton();
             this.SuspendLayout();
@@ -65,11 +66,13 @@
             // 
             // NewTag
             // 
+            this.AcceptButton = this.btnAddNewTag;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(206, 100);
             this.Controls.Add(this.btnAddNewTag);
             this.Controls.Add(this.tbTagName);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "NewTag";

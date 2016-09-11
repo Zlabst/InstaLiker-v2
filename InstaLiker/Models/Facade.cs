@@ -28,6 +28,7 @@ namespace InstaLiker.Models
             _htmlParser.OnUpdateHtmlDoc += _mainView.GetHtmlDocument;
             _htmlParser.OnStartStopMainProc += _mainView.EnableCtrls;
             _htmlParser.OnPressLike += _mainView.PressLike;
+            _htmlParser.OnRefresh += _mainView.RefreshBrowser;
         }
 
         // запуск процедуры проставления лайков

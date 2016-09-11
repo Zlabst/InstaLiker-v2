@@ -36,6 +36,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.laytabMain = new System.Windows.Forms.TableLayoutPanel();
             this.laytabBrowser = new System.Windows.Forms.TableLayoutPanel();
             this.wcBrowser = new Awesomium.Windows.Forms.WebControl(this.components);
@@ -74,7 +75,7 @@
             this.laytabMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5.050505F));
             this.laytabMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 91.91919F));
             this.laytabMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3.030303F));
-            this.laytabMain.Size = new System.Drawing.Size(665, 474);
+            this.laytabMain.Size = new System.Drawing.Size(864, 494);
             this.laytabMain.TabIndex = 0;
             // 
             // laytabBrowser
@@ -84,19 +85,19 @@
             this.laytabBrowser.Controls.Add(this.wcBrowser, 0, 0);
             this.laytabBrowser.Controls.Add(this.lblStatusBar, 0, 1);
             this.laytabBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.laytabBrowser.Location = new System.Drawing.Point(3, 26);
+            this.laytabBrowser.Location = new System.Drawing.Point(3, 27);
             this.laytabBrowser.Name = "laytabBrowser";
             this.laytabBrowser.RowCount = 2;
             this.laytabBrowser.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
             this.laytabBrowser.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.laytabBrowser.Size = new System.Drawing.Size(326, 429);
+            this.laytabBrowser.Size = new System.Drawing.Size(426, 448);
             this.laytabBrowser.TabIndex = 0;
             // 
             // wcBrowser
             // 
             this.wcBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.wcBrowser.Location = new System.Drawing.Point(3, 3);
-            this.wcBrowser.Size = new System.Drawing.Size(320, 380);
+            this.wcBrowser.Size = new System.Drawing.Size(420, 397);
             this.wcBrowser.TabIndex = 0;
             // 
             // lblStatusBar
@@ -106,10 +107,10 @@
             this.lblStatusBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblStatusBar.Font = new System.Drawing.Font("Roboto", 11F);
             this.lblStatusBar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lblStatusBar.Location = new System.Drawing.Point(3, 386);
+            this.lblStatusBar.Location = new System.Drawing.Point(3, 403);
             this.lblStatusBar.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblStatusBar.Name = "lblStatusBar";
-            this.lblStatusBar.Size = new System.Drawing.Size(320, 43);
+            this.lblStatusBar.Size = new System.Drawing.Size(420, 45);
             this.lblStatusBar.TabIndex = 1;
             this.lblStatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -130,7 +131,7 @@
             this.laytabData.Controls.Add(this.btnAddTag, 5, 12);
             this.laytabData.Controls.Add(this.btnDelTag, 6, 12);
             this.laytabData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.laytabData.Location = new System.Drawing.Point(335, 26);
+            this.laytabData.Location = new System.Drawing.Point(435, 27);
             this.laytabData.Name = "laytabData";
             this.laytabData.RowCount = 15;
             this.laytabData.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.666668F));
@@ -148,7 +149,7 @@
             this.laytabData.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.666668F));
             this.laytabData.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.666668F));
             this.laytabData.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 6.666668F));
-            this.laytabData.Size = new System.Drawing.Size(327, 429);
+            this.laytabData.Size = new System.Drawing.Size(426, 448);
             this.laytabData.TabIndex = 1;
             // 
             // gvTags
@@ -181,7 +182,7 @@
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.gvTags.DefaultCellStyle = dataGridViewCellStyle5;
             this.gvTags.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gvTags.Location = new System.Drawing.Point(47, 3);
+            this.gvTags.Location = new System.Drawing.Point(61, 3);
             this.gvTags.MultiSelect = false;
             this.gvTags.Name = "gvTags";
             this.gvTags.ReadOnly = true;
@@ -197,7 +198,7 @@
             this.gvTags.RowsDefaultCellStyle = dataGridViewCellStyle7;
             this.laytabData.SetRowSpan(this.gvTags, 12);
             this.gvTags.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gvTags.Size = new System.Drawing.Size(258, 330);
+            this.gvTags.Size = new System.Drawing.Size(342, 342);
             this.gvTags.TabIndex = 0;
             // 
             // tagName
@@ -231,11 +232,11 @@
             this.laytabData.SetColumnSpan(this.btnStart, 3);
             this.btnStart.Depth = 0;
             this.btnStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnStart.Location = new System.Drawing.Point(47, 395);
+            this.btnStart.Location = new System.Drawing.Point(61, 409);
             this.btnStart.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnStart.Name = "btnStart";
             this.btnStart.Primary = true;
-            this.btnStart.Size = new System.Drawing.Size(126, 31);
+            this.btnStart.Size = new System.Drawing.Size(168, 36);
             this.btnStart.TabIndex = 3;
             this.btnStart.Text = "START";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -246,11 +247,11 @@
             this.laytabData.SetColumnSpan(this.btnStop, 3);
             this.btnStop.Depth = 0;
             this.btnStop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnStop.Location = new System.Drawing.Point(179, 395);
+            this.btnStop.Location = new System.Drawing.Point(235, 409);
             this.btnStop.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnStop.Name = "btnStop";
             this.btnStop.Primary = true;
-            this.btnStop.Size = new System.Drawing.Size(126, 31);
+            this.btnStop.Size = new System.Drawing.Size(168, 36);
             this.btnStop.TabIndex = 4;
             this.btnStop.Text = "STOP";
             this.btnStop.UseVisualStyleBackColor = true;
@@ -261,11 +262,11 @@
             // 
             this.btnAddTag.Depth = 0;
             this.btnAddTag.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnAddTag.Location = new System.Drawing.Point(223, 339);
+            this.btnAddTag.Location = new System.Drawing.Point(293, 351);
             this.btnAddTag.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnAddTag.Name = "btnAddTag";
             this.btnAddTag.Primary = true;
-            this.btnAddTag.Size = new System.Drawing.Size(38, 22);
+            this.btnAddTag.Size = new System.Drawing.Size(52, 23);
             this.btnAddTag.TabIndex = 5;
             this.btnAddTag.Text = "+";
             this.btnAddTag.UseVisualStyleBackColor = true;
@@ -275,11 +276,11 @@
             // 
             this.btnDelTag.Depth = 0;
             this.btnDelTag.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnDelTag.Location = new System.Drawing.Point(267, 339);
+            this.btnDelTag.Location = new System.Drawing.Point(351, 351);
             this.btnDelTag.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnDelTag.Name = "btnDelTag";
             this.btnDelTag.Primary = true;
-            this.btnDelTag.Size = new System.Drawing.Size(38, 22);
+            this.btnDelTag.Size = new System.Drawing.Size(52, 23);
             this.btnDelTag.TabIndex = 6;
             this.btnDelTag.Text = "-";
             this.btnDelTag.UseVisualStyleBackColor = true;
@@ -292,7 +293,7 @@
             this.msiMenu});
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
-            this.menu.Size = new System.Drawing.Size(332, 23);
+            this.menu.Size = new System.Drawing.Size(432, 24);
             this.menu.TabIndex = 2;
             // 
             // msiMenu
@@ -301,7 +302,7 @@
             this.msiSettings});
             this.msiMenu.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.msiMenu.Name = "msiMenu";
-            this.msiMenu.Size = new System.Drawing.Size(52, 19);
+            this.msiMenu.Size = new System.Drawing.Size(52, 20);
             this.msiMenu.Text = "Меню";
             // 
             // msiSettings
@@ -317,8 +318,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(665, 474);
+            this.ClientSize = new System.Drawing.Size(864, 494);
             this.Controls.Add(this.laytabMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "InstaLiker";
