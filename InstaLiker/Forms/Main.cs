@@ -41,12 +41,12 @@ namespace InstaLiker.Forms
             if (InvokeRequired)
                 Invoke(new Action(() =>
                 {
-                    wcBrowser.Refresh();
+                    wcBrowser.Reload(true);
                     WaitLoading();
                 }));
             else
             {
-                wcBrowser.Refresh();
+                wcBrowser.Reload(true);
                 WaitLoading();
             }
         }

@@ -189,7 +189,7 @@ namespace InstaLiker.Models
                 Application.DoEvents();
                 OnSendMessage.Invoke("Нет связи с интернетом или сайтом");
                 OnRefresh.Invoke();
-                Thread.Sleep(20000);
+                //Thread.Sleep(20000);
             }
 
             OnSendMessage.Invoke("Работает");
