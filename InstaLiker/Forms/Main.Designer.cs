@@ -111,7 +111,6 @@
             this.lblStatusBar.Name = "lblStatusBar";
             this.lblStatusBar.Size = new System.Drawing.Size(320, 43);
             this.lblStatusBar.TabIndex = 1;
-            this.lblStatusBar.Text = "StatusBar";
             this.lblStatusBar.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // laytabData
@@ -255,6 +254,8 @@
             this.btnStop.TabIndex = 4;
             this.btnStop.Text = "STOP";
             this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Visible = false;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // btnAddTag
             // 

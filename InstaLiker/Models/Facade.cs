@@ -1,31 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using InstaLiker.Forms;
 
 namespace InstaLiker.Models
 {
     public class Facade
     {
-        private readonly IMainView _mainView;
-        private readonly HtmlParser _htmlParser;
         private readonly DataContext _dataContext;
+        private readonly HtmlParser _htmlParser;
+        private readonly IMainView _mainView;
 
         public Facade(IMainView mainView, DataContext dataContext)
         {
             _dataContext = dataContext;
             _mainView = mainView;
-            _htmlParser = new HtmlParser(mainView.MainThread, int.Parse(GetSettMinWaitAfterLike), int.Parse(GetSettPeriodMinTimer),
-                GetSourceTags, mainView.WebBrowser);
+            _htmlParser = new HtmlParser(GetSourceTags);
+
+            AddEvents();
         }
 
+        #region HtmlParser
+
+        // привязка событий
+        private void AddEvents()
+        {
+            _htmlParser.OnNavigateToPage += _mainView.NavigateToPage;
+            _htmlParser.OnSendMessage += _mainView.ChangeStatus;
+            _htmlParser.OnUpdateHtmlDoc += _mainView.GetHtmlDocument;
+            _htmlParser.OnStartStopMainProc += _mainView.EnableCtrls;
+            _htmlParser.OnPressLike += _mainView.PressLike;
+        }
+
+        // запуск процедуры проставления лайков
         public void StartParser()
         {
+            _htmlParser.MinWaitAfterLike = int.Parse(GetSettMinWaitAfterLike);
+            _htmlParser.PeriodMinTimer = int.Parse(GetSettPeriodMinTimer);
+
             _htmlParser.Start();
         }
+
+        // оставнока процедуры проставления лайков
+        public void StopParser()
+        {
+            _htmlParser.IsCancel = true;
+        }
+
+        #endregion
 
         #region DataContext
 
@@ -56,7 +76,7 @@ namespace InstaLiker.Models
         // добавление нового тега
         public void AddNewTag(string tagName)
         {
-            _dataContext.AddNewTag(tagName);   
+            _dataContext.AddNewTag(tagName);
         }
 
         // удаление тега
@@ -66,6 +86,5 @@ namespace InstaLiker.Models
         }
 
         #endregion
-
     }
 }
