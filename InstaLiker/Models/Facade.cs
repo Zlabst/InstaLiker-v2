@@ -20,6 +20,11 @@ namespace InstaLiker.Models
 
         #region HtmlParser
 
+        public DataTable GetStatistics
+        {
+            get { return _htmlParser.GetStatistic; }
+        }
+
         // привязка событий
         private void AddEvents()
         {

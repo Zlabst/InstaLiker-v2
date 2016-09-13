@@ -53,6 +53,7 @@
             this.menu = new System.Windows.Forms.MenuStrip();
             this.msiMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.msiSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.msiStats = new System.Windows.Forms.ToolStripMenuItem();
             this.laytabMain.SuspendLayout();
             this.laytabBrowser.SuspendLayout();
             this.laytabData.SuspendLayout();
@@ -299,7 +300,8 @@
             // msiMenu
             // 
             this.msiMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.msiSettings});
+            this.msiSettings,
+            this.msiStats});
             this.msiMenu.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.msiMenu.Name = "msiMenu";
             this.msiMenu.Size = new System.Drawing.Size(52, 20);
@@ -309,9 +311,16 @@
             // 
             this.msiSettings.Image = global::InstaLiker.Properties.Resources.Settings1;
             this.msiSettings.Name = "msiSettings";
-            this.msiSettings.Size = new System.Drawing.Size(134, 22);
+            this.msiSettings.Size = new System.Drawing.Size(152, 22);
             this.msiSettings.Text = "Настройки";
             this.msiSettings.Click += new System.EventHandler(this.msiSettings_Click);
+            // 
+            // msiStats
+            // 
+            this.msiStats.Name = "msiStats";
+            this.msiStats.Size = new System.Drawing.Size(152, 22);
+            this.msiStats.Text = "Статистика";
+            this.msiStats.Click += new System.EventHandler(this.msiStats_Click);
             // 
             // Main
             // 
@@ -355,5 +364,6 @@
         private System.Windows.Forms.MenuStrip menu;
         private System.Windows.Forms.ToolStripMenuItem msiMenu;
         private System.Windows.Forms.ToolStripMenuItem msiSettings;
+        private System.Windows.Forms.ToolStripMenuItem msiStats;
     }
 }

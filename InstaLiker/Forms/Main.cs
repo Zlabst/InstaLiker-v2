@@ -118,6 +118,12 @@ namespace InstaLiker.Forms
             _facade.UpdateSettings(setFrm.GetSettMinWaitAfterLike, setFrm.GetSettPeriodMinTimer);
         }
 
+        // вызов статистики
+        private void msiStats_Click(object sender, EventArgs e)
+        {
+            new Statistics(_facade.GetStatistics).ShowDialog();
+        }
+
         // добавление нового тега
         private void btnAddTag_Click(object sender, EventArgs e)
         {
@@ -203,5 +209,7 @@ namespace InstaLiker.Forms
 
             return result;
         }
+
+        
     }
 }
