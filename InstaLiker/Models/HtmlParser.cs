@@ -5,8 +5,8 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Timers;
-using Timer = System.Timers.Timer;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace InstaLiker.Models
 {
@@ -21,17 +21,21 @@ namespace InstaLiker.Models
         private readonly object _lockObj2 = new object();
         private readonly DataTable _sourceData;
         private int _activeTag;
-        private int _activeThreads; // кол-во ожидающих потоков
         private string _htmlDocument;
         private int _msWaitAfterLike;
         private int _periodMsTimer;
-        private Timer _timer;
         private List<string> _urlsByTag;
         public bool IsCancel; // остановка выполнения основного метода
+        public DataTable GetStatistic { get; }
 
         public HtmlParser(DataTable sourceData)
         {
             _sourceData = sourceData;
+
+            GetStatistic = new DataTable();
+            GetStatistic.Columns.Add("step", typeof(int));
+            GetStatistic.Columns.Add("datetime", typeof(DateTime));
+            GetStatistic.AcceptChanges();
         }
 
         public int MinWaitAfterLike
@@ -49,63 +53,84 @@ namespace InstaLiker.Models
         public event Action<string> OnSendMessage = s => { };
         public event Action<int> OnPressLike = i => { };
         public event Action<bool> OnStartStopMainProc = b => { };
+        public event Action OnRefresh = () => { };
 
         // запуск таймера
         public void Start()
         {
-            _activeThreads = 0;
             IsCancel = false;
 
-            if (!IsAllCheck())
+            CheckInternetConnection();
+
+            if (!IsUserActive())
                 return;
 
             OnSendMessage.Invoke("Работает");
             OnStartStopMainProc.Invoke(true);
 
-            _timer = new Timer(_periodMsTimer);
-            _timer.Start();
-            _timer.Elapsed += ElapsedTimer;
+            TaskTest();
+
+            //_timer = new Timer(_periodMsTimer);
+            //_timer.Elapsed += (sender, args) => { MainProc(); };
+
+            //var task = new Task(MainProc);
+            //task.Start();
+            //task.ContinueWith(t =>
+            //{
+            //    _timer.Start();
+            //});
+        }
+
+        private void UpdateStats()
+        {
+            GetStatistic.Rows.Add(GetStatistic.Rows.Count + 1, DateTime.Now);
+            GetStatistic.AcceptChanges();
+        }
+
+        // TODO
+        private void TaskTest()
+        {
+            var task = new Task(MainProc);
+
+            UpdateStats();
+
+            task.Start();
+
+            task.ContinueWith(t =>
+            {
+                t.Dispose();
+
+                if (IsCancel)
+                    return;
+
+                var msSleep = new Random().Next((int)(_periodMsTimer * 0.5), (int)(_periodMsTimer * 1.5));
+                //Thread.Sleep(msSleep);
+
+                TaskTest();
+            });
         }
 
         // процедура, которая выполняется по таймеру
-        private void ElapsedTimer(object sender, ElapsedEventArgs elapsedEventArgs)
+        private void MainProc()
         {
-            // ограничение на максимум 1 ожидающий поток
-            lock (_lockObj1)
+            if (IsCancel)
             {
-                if (_activeThreads < 2)
-                    ++_activeThreads;
-                else
-                    return;
+                OnSendMessage.Invoke("Остановлен");
+                OnStartStopMainProc.Invoke(false);
+                return;
             }
 
-            lock (_lockObj2)
-            {
-                if (IsCancel)
-                {
-                    _timer.Stop();
-                    OnSendMessage.Invoke("Остановлен");
-                    OnStartStopMainProc.Invoke(false);
-                    return;
-                }
-
-                MainProcedure();
-            }
-
-            lock (_lockObj1)
-                _activeThreads--;
+            TagsProcess();
         }
 
-        // основная процедура
-        private void MainProcedure()
+        // основная обработка тегов
+        private void TagsProcess()
         {
-            if (!IsAllCheck())
-                return;
+            CheckInternetConnection();
 
             foreach (var tagRow in _sourceData.Select())
             {
-                if (!IsAllCheck())
-                    return;
+                CheckInternetConnection();
 
                 _activeTag = (int) tagRow["TagId"];
 
@@ -125,8 +150,7 @@ namespace InstaLiker.Models
         {
             foreach (var url in _urlsByTag)
             {
-                if (!IsAllCheck())
-                    return;
+                CheckInternetConnection();
 
                 var uriForLike = new Uri(PrefixUrl + url);
 
@@ -155,7 +179,7 @@ namespace InstaLiker.Models
         {
             _urlsByTag = new List<string>();
 
-            const string regexPatt = @"{""code"": ""(?'url'.+?)"", ""date"":";
+            const string regexPatt = @"{""code"": ""(?'url'.+?)"",";
 
             var mcRes = Regex.Matches(_htmlDocument, regexPatt, RegexOptions.IgnoreCase);
 
@@ -171,29 +195,27 @@ namespace InstaLiker.Models
 
             const string regexPatt = @"<a class=""_soakw _vbtk2 coreSpriteDesktopNavProfile"" href=""";
 
-            return Regex.IsMatch(_htmlDocument, regexPatt, RegexOptions.IgnoreCase);
-        }
-
-        // все проверки доступа к сайту и интернету
-        private bool IsAllCheck()
-        {
-            bool result;
-
-            result = IsOnline();
-            if (!result)
-            {
-                OnSendMessage.Invoke("Нет связи с Instagram");
-                return false;
-            }
-
-            result = IsUserActive();
-            if (!result)
+            if (Regex.IsMatch(_htmlDocument, regexPatt, RegexOptions.IgnoreCase))
+                return true;
+            else
             {
                 OnSendMessage.Invoke("Не введён логин");
                 return false;
             }
+        }
 
-            return true;
+        // постоянная проверка связи
+        private void CheckInternetConnection()
+        {
+            while (!IsOnline())
+            {
+                Application.DoEvents();
+                OnSendMessage.Invoke("Нет связи с интернетом или сайтом");
+                OnRefresh.Invoke();
+                //Thread.Sleep(20000);
+            }
+
+            OnSendMessage.Invoke("Работает");
         }
 
         // проверка или пингуется сайт

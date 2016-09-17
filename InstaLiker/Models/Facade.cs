@@ -20,6 +20,11 @@ namespace InstaLiker.Models
 
         #region HtmlParser
 
+        public DataTable GetStatistics
+        {
+            get { return _htmlParser.GetStatistic; }
+        }
+
         // привязка событий
         private void AddEvents()
         {
@@ -28,6 +33,7 @@ namespace InstaLiker.Models
             _htmlParser.OnUpdateHtmlDoc += _mainView.GetHtmlDocument;
             _htmlParser.OnStartStopMainProc += _mainView.EnableCtrls;
             _htmlParser.OnPressLike += _mainView.PressLike;
+            _htmlParser.OnRefresh += _mainView.RefreshBrowser;
         }
 
         // запуск процедуры проставления лайков

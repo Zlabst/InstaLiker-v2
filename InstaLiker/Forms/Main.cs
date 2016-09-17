@@ -36,6 +36,21 @@ namespace InstaLiker.Forms
                 lblStatusBar.Text = message;
         }
 
+        public void RefreshBrowser()
+        {
+            if (InvokeRequired)
+                Invoke(new Action(() =>
+                {
+                    wcBrowser.Reload(true);
+                    WaitLoading();
+                }));
+            else
+            {
+                wcBrowser.Reload(true);
+                WaitLoading();
+            }
+        }
+
         public void GetHtmlDocument(out string htmlDocument)
         {
             htmlDocument = GetStringHtmlDoc();
@@ -101,6 +116,12 @@ namespace InstaLiker.Forms
                 return;
 
             _facade.UpdateSettings(setFrm.GetSettMinWaitAfterLike, setFrm.GetSettPeriodMinTimer);
+        }
+
+        // вызов статистики
+        private void msiStats_Click(object sender, EventArgs e)
+        {
+            new Statistics(_facade.GetStatistics).ShowDialog();
         }
 
         // добавление нового тега
@@ -188,5 +209,7 @@ namespace InstaLiker.Forms
 
             return result;
         }
+
+        
     }
 }

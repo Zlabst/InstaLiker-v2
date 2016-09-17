@@ -9,5 +9,6 @@ namespace InstaLiker.Forms
         void GetHtmlDocument(out string htmlDocument);
         void EnableCtrls(bool state);
         void PressLike(int tagId);
+        void RefreshBrowser();
     }
 }
