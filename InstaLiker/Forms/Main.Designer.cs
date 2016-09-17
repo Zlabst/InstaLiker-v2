@@ -311,14 +311,14 @@
             // 
             this.msiSettings.Image = global::InstaLiker.Properties.Resources.Settings1;
             this.msiSettings.Name = "msiSettings";
-            this.msiSettings.Size = new System.Drawing.Size(152, 22);
+            this.msiSettings.Size = new System.Drawing.Size(136, 22);
             this.msiSettings.Text = "Настройки";
             this.msiSettings.Click += new System.EventHandler(this.msiSettings_Click);
             // 
             // msiStats
             // 
             this.msiStats.Name = "msiStats";
-            this.msiStats.Size = new System.Drawing.Size(152, 22);
+            this.msiStats.Size = new System.Drawing.Size(136, 22);
             this.msiStats.Text = "Статистика";
             this.msiStats.Click += new System.EventHandler(this.msiStats_Click);
             // 

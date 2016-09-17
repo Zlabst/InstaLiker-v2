@@ -180,7 +180,7 @@ namespace InstaLiker.Forms
             {
                 Invoke(new Action(() =>
                 {
-                    while (wcBrowser.IsLoading)
+                    while (wcBrowser.IsLoading || !wcBrowser.IsLive)
                     {
                         Thread.Sleep(200);
                         Application.DoEvents();
@@ -188,7 +188,7 @@ namespace InstaLiker.Forms
                 }));
             }
             else
-                while (wcBrowser.IsLoading)
+                while (wcBrowser.IsLoading || !wcBrowser.IsLive)
                 {
                     Thread.Sleep(200);
                     Application.DoEvents();

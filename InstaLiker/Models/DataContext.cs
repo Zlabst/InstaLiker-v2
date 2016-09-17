@@ -8,28 +8,34 @@ namespace InstaLiker.Models
     public class DataContext : DbContext
     {
         public DataTable SourceTags; // таблица с данными для грида
-        // в конструкторе - имя базы
-        public DataContext() : base("DBTags")
-        {
-            Database.Initialize(true);
 
+        public DataContext()
+        {
             CreateSupTables();
         }
-
-        // таблицы EF
-        public DbSet<Tags> Tags { get; set; }
-        public DbSet<MainSettings> MainSettings { get; set; }
 
         // настройка - ожидание после лайка (в минутах)
         public string GetSettMinWaitAfterLike
         {
-            get { return MainSettings.Find("MinWaitAfterLike").SetValue; }
+            get
+            { 
+                using (var db = new Context())
+                {
+                    return db.MainSettings.Find("MinWaitAfterLike").SetValue;
+                }
+            }
         }
 
         // настройка - переодичность выполнения основного метода таймером (в минутах)
         public string GetSettPeriodMinTimer
         {
-            get { return MainSettings.Find("PeriodMinTimer").SetValue; }
+            get
+            {
+                using (var db = new Context())
+                {
+                    return db.MainSettings.Find("PeriodMinTimer").SetValue;
+                }
+            }
         }
 
         private void CreateSupTables()
@@ -47,16 +53,22 @@ namespace InstaLiker.Models
         // обновление настроек
         public void UpdateSettings(string minWaitAfterLike, string periodMinTimer)
         {
-            MainSettings.Find("MinWaitAfterLike").SetValue = minWaitAfterLike;
-            MainSettings.Find("PeriodMinTimer").SetValue = periodMinTimer;
-            SaveChanges();
+            using (var db = new Context())
+            {
+                db.MainSettings.Find("MinWaitAfterLike").SetValue = minWaitAfterLike;
+                db.MainSettings.Find("PeriodMinTimer").SetValue = periodMinTimer;
+                db.SaveChanges();
+            }
         }
 
         // добавление нового тега
         public void AddNewTag(string tagName)
         {
-            Tags.Add(new Tags {TagName = tagName});
-            SaveChanges();
+            using (var db = new Context())
+            {
+                db.Tags.Add(new Tags {TagName = tagName});
+                db.SaveChanges();
+            }
 
             SyncSourceTabTags();
         }
@@ -64,13 +76,16 @@ namespace InstaLiker.Models
         // удаление тега
         public void DeleteTag(int tagId)
         {
-            var tag = Tags.Find(tagId);
+            using (var db = new Context())
+            {
+                var tag = db.Tags.Find(tagId);
 
-            if (tag == null)
-                return;
+                if (tag == null)
+                    return;
 
-            Tags.Remove(tag);
-            SaveChanges();
+                db.Tags.Remove(tag);
+                db.SaveChanges();
+            }
 
             SyncSourceTabTags();
         }
@@ -78,13 +93,16 @@ namespace InstaLiker.Models
         // актуализация локальной таблицы для грида
         private void SyncSourceTabTags()
         {
-            foreach (var item in Tags)
-                if (SourceTags.Rows.Find(item.TagId) == null)
-                    SourceTags.Rows.Add(item.TagId, item.TagName);
+            using (var db = new Context())
+            {
+                foreach (var item in db.Tags)
+                    if (SourceTags.Rows.Find(item.TagId) == null)
+                        SourceTags.Rows.Add(item.TagId, item.TagName);
 
-            foreach (var item in SourceTags.Select())
-                if (Tags.Find(item["TagId"]) == null)
-                    item.Delete();
+                foreach (var item in SourceTags.Select())
+                    if (db.Tags.Find(item["TagId"]) == null)
+                        item.Delete();
+            }
 
             SourceTags.AcceptChanges();
         }
@@ -92,13 +110,16 @@ namespace InstaLiker.Models
         // при первом запуске приложение - добавление настроек по умолчанию
         private void AddDefaultSettings()
         {
-            if (MainSettings.Find("MinWaitAfterLike") == null)
-                MainSettings.Add(new MainSettings {SetName = "MinWaitAfterLike", SetValue = "1"});
+            using (var db = new Context())
+            {
+                if (db.MainSettings.Find("MinWaitAfterLike") == null)
+                    db.MainSettings.Add(new MainSettings {SetName = "MinWaitAfterLike", SetValue = "1"});
 
-            if (MainSettings.Find("PeriodMinTimer") == null)
-                MainSettings.Add(new MainSettings {SetName = "PeriodMinTimer", SetValue = "15"});
+                if (db.MainSettings.Find("PeriodMinTimer") == null)
+                    db.MainSettings.Add(new MainSettings {SetName = "PeriodMinTimer", SetValue = "15"});
 
-            SaveChanges();
+                db.SaveChanges();
+            }
         }
     }
 }

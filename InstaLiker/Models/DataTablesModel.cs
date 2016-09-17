@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 
 namespace InstaLiker.Models
 {
@@ -19,5 +20,17 @@ namespace InstaLiker.Models
         [Key]
         public string SetName { get; set; }
         public string SetValue { get; set; }
+    }
+
+    public class Context : DbContext
+    {
+        // таблицы EF
+        public DbSet<Tags> Tags { get; set; }
+        public DbSet<MainSettings> MainSettings { get; set; }
+
+        public Context() : base("DBTags")
+        {
+            
+        }
     }
 }
