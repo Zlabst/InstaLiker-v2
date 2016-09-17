@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Threading;
 using System.Windows.Forms;
 using InstaLiker.Models;
 
@@ -41,12 +42,12 @@ namespace InstaLiker.Forms
             if (InvokeRequired)
                 Invoke(new Action(() =>
                 {
-                    wcBrowser.Reload(true);
+                    wcBrowser.Reload(false);
                     WaitLoading();
                 }));
             else
             {
-                wcBrowser.Reload(true);
+                wcBrowser.Reload(false);
                 WaitLoading();
             }
         }
@@ -121,7 +122,7 @@ namespace InstaLiker.Forms
         // вызов статистики
         private void msiStats_Click(object sender, EventArgs e)
         {
-            new Statistics(_facade.GetStatistics).ShowDialog();
+            new Statistic(_facade.GetStatistics).ShowDialog();
         }
 
         // добавление нового тега
@@ -180,12 +181,18 @@ namespace InstaLiker.Forms
                 Invoke(new Action(() =>
                 {
                     while (wcBrowser.IsLoading)
+                    {
+                        Thread.Sleep(200);
                         Application.DoEvents();
+                    }
                 }));
             }
             else
                 while (wcBrowser.IsLoading)
+                {
+                    Thread.Sleep(200);
                     Application.DoEvents();
+                }
         }
 
         // формирование нового HtmlDocument
@@ -209,7 +216,5 @@ namespace InstaLiker.Forms
 
             return result;
         }
-
-        
     }
 }

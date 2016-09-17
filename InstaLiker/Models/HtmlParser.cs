@@ -69,18 +69,9 @@ namespace InstaLiker.Models
             OnStartStopMainProc.Invoke(true);
 
             TaskTest();
-
-            //_timer = new Timer(_periodMsTimer);
-            //_timer.Elapsed += (sender, args) => { MainProc(); };
-
-            //var task = new Task(MainProc);
-            //task.Start();
-            //task.ContinueWith(t =>
-            //{
-            //    _timer.Start();
-            //});
         }
 
+        // обновление текущей статистики
         private void UpdateStats()
         {
             GetStatistic.Rows.Add(GetStatistic.Rows.Count + 1, DateTime.Now);
@@ -90,24 +81,19 @@ namespace InstaLiker.Models
         // TODO
         private void TaskTest()
         {
-            var task = new Task(MainProc);
+            var task = new Task(() =>
+            {
+                while (!IsCancel)
+                {
+                    UpdateStats();
+                    MainProc();
 
-            UpdateStats();
+                    //var msSleep = new Random().Next((int)(_periodMsTimer * 0.5), (int)(_periodMsTimer * 1.5));
+                    //Thread.Sleep(msSleep);
+                }
+            });
 
             task.Start();
-
-            task.ContinueWith(t =>
-            {
-                t.Dispose();
-
-                if (IsCancel)
-                    return;
-
-                var msSleep = new Random().Next((int)(_periodMsTimer * 0.5), (int)(_periodMsTimer * 1.5));
-                //Thread.Sleep(msSleep);
-
-                TaskTest();
-            });
         }
 
         // процедура, которая выполняется по таймеру
@@ -158,8 +144,11 @@ namespace InstaLiker.Models
                     OnNavigateToPage.Invoke(uriForLike, out _htmlDocument);
 
                 if (!IsPageNotLike())
+                {
+                    Thread.Sleep(4000);
                     continue;
-
+                }
+                    
                 // press like
                 OnPressLike.Invoke(_activeTag);
 
@@ -212,7 +201,7 @@ namespace InstaLiker.Models
                 Application.DoEvents();
                 OnSendMessage.Invoke("Нет связи с интернетом или сайтом");
                 OnRefresh.Invoke();
-                //Thread.Sleep(20000);
+                Thread.Sleep(10000);
             }
 
             OnSendMessage.Invoke("Работает");
