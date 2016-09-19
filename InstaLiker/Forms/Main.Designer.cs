@@ -100,6 +100,8 @@
             this.wcBrowser.Location = new System.Drawing.Point(3, 3);
             this.wcBrowser.Size = new System.Drawing.Size(420, 397);
             this.wcBrowser.TabIndex = 0;
+            this.wcBrowser.LoadingFrame += new Awesomium.Core.LoadingFrameEventHandler(this.Awesomium_Windows_Forms_WebControl_LoadingFrame);
+            this.wcBrowser.LoadingFrameComplete += new Awesomium.Core.FrameEventHandler(this.Awesomium_Windows_Forms_WebControl_LoadingFrameComplete);
             // 
             // lblStatusBar
             // 

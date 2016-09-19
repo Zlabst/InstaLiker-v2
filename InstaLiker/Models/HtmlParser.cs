@@ -17,8 +17,6 @@ namespace InstaLiker.Models
 
         private const string PrefixTagUrl = @"https://www.instagram.com/explore/tags/";
         private const string PrefixUrl = @"https://www.instagram.com/p/";
-        private readonly object _lockObj1 = new object();
-        private readonly object _lockObj2 = new object();
         private readonly DataTable _sourceData;
         private int _activeTag;
         private string _htmlDocument;
@@ -55,7 +53,7 @@ namespace InstaLiker.Models
         public event Action<bool> OnStartStopMainProc = b => { };
         public event Action OnRefresh = () => { };
 
-        // запуск таймера
+        // запуск циклического выполнения
         public void Start()
         {
             IsCancel = false;
@@ -68,19 +66,6 @@ namespace InstaLiker.Models
             OnSendMessage.Invoke("Работает");
             OnStartStopMainProc.Invoke(true);
 
-            TaskTest();
-        }
-
-        // обновление текущей статистики
-        private void UpdateStats()
-        {
-            GetStatistic.Rows.Add(GetStatistic.Rows.Count + 1, DateTime.Now);
-            GetStatistic.AcceptChanges();
-        }
-
-        // TODO
-        private void TaskTest()
-        {
             var task = new Task(() =>
             {
                 while (!IsCancel)
@@ -88,12 +73,19 @@ namespace InstaLiker.Models
                     UpdateStats();
                     MainProc();
 
-                    //var msSleep = new Random().Next((int)(_periodMsTimer * 0.5), (int)(_periodMsTimer * 1.5));
-                    //Thread.Sleep(msSleep);
+                    var msSleep = new Random().Next((int)(_periodMsTimer * 0.5), (int)(_periodMsTimer * 1.5));
+                    Thread.Sleep(msSleep);
                 }
             });
 
             task.Start();
+        }
+
+        // обновление текущей статистики
+        private void UpdateStats()
+        {
+            GetStatistic.Rows.Add(GetStatistic.Rows.Count + 1, DateTime.Now);
+            GetStatistic.AcceptChanges();
         }
 
         // процедура, которая выполняется по таймеру
@@ -144,11 +136,8 @@ namespace InstaLiker.Models
                     OnNavigateToPage.Invoke(uriForLike, out _htmlDocument);
 
                 if (!IsPageNotLike())
-                {
-                    Thread.Sleep(4000);
                     continue;
-                }
-                    
+                
                 // press like
                 OnPressLike.Invoke(_activeTag);
 

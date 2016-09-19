@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Threading;
 using System.Windows.Forms;
 using InstaLiker.Models;
 
@@ -9,6 +8,7 @@ namespace InstaLiker.Forms
     public partial class Main : Form, IMainView
     {
         private Facade _facade;
+        private bool _isLoadingCompleted;
 
         public Main()
         {
@@ -177,22 +177,26 @@ namespace InstaLiker.Forms
         private void WaitLoading()
         {
             if (InvokeRequired)
-            {
-                Invoke(new Action(() =>
-                {
-                    while (wcBrowser.IsLoading || !wcBrowser.IsLive)
-                    {
-                        Thread.Sleep(200);
-                        Application.DoEvents();
-                    }
-                }));
-            }
+                Invoke(new Action(CheckBrowserStatus));
             else
-                while (wcBrowser.IsLoading || !wcBrowser.IsLive)
+                CheckBrowserStatus();
+        }
+
+        // проверка загрузки браузера
+        private void CheckBrowserStatus()
+        {
+            while (!_isLoadingCompleted || !wcBrowser.IsLive || !wcBrowser.IsDocumentReady)
+            {
+                Application.DoEvents();
+
+                if (!wcBrowser.IsLive)
                 {
-                    Thread.Sleep(200);
-                    Application.DoEvents();
+                    wcBrowser.Reload(false);
+
+                    while (!_isLoadingCompleted || !wcBrowser.IsDocumentReady)
+                        Application.DoEvents();
                 }
+            }
         }
 
         // формирование нового HtmlDocument
@@ -215,6 +219,20 @@ namespace InstaLiker.Forms
             }
 
             return result;
+        }
+
+        // загрузка браузера окончена
+        private void Awesomium_Windows_Forms_WebControl_LoadingFrameComplete(object sender, Awesomium.Core.FrameEventArgs e)
+        {
+            if (e.IsMainFrame)
+                _isLoadingCompleted = true;
+        }
+
+        // начало загрузки браузера
+        private void Awesomium_Windows_Forms_WebControl_LoadingFrame(object sender, Awesomium.Core.LoadingFrameEventArgs e)
+        {
+            if (e.IsMainFrame)
+                _isLoadingCompleted = false;
         }
     }
 }
