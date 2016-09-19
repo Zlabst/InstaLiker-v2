@@ -19,11 +19,18 @@ namespace InstaLiker.Forms
         {
             if (InvokeRequired)
             {
-                Invoke(new Action(() => { wcBrowser.Source = uriTag; }));
+                Invoke(new Action(() =>
+                {
+                    wcBrowser.Source = uriTag;
+                    _isLoadingCompleted = false;
+                }));
             }
             else
+            {
                 wcBrowser.Source = uriTag;
-
+                _isLoadingCompleted = false;
+            }
+                
             WaitLoading();
 
             htmlBody = GetStringHtmlDoc();
@@ -152,6 +159,8 @@ namespace InstaLiker.Forms
         // старт процедуры
         private void btnStart_Click(object sender, EventArgs e)
         {
+            WaitLoading();
+
             _facade.StartParser();
         }
 
