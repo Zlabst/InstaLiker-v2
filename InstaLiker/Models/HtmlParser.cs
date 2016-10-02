@@ -66,7 +66,7 @@ namespace InstaLiker.Models
             OnSendMessage.Invoke("Работает");
             OnStartStopMainProc.Invoke(true);
 
-            var task = new Task(() =>
+            Task.Factory.StartNew(() =>
             {
                 while (!IsCancel)
                 {
@@ -77,8 +77,6 @@ namespace InstaLiker.Models
                     Thread.Sleep(msSleep);
                 }
             });
-
-            task.Start();
         }
 
         // обновление текущей статистики

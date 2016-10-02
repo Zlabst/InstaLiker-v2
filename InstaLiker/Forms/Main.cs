@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Windows.Forms;
+using Awesomium.Core;
 using InstaLiker.Models;
 
 namespace InstaLiker.Forms
@@ -14,6 +15,8 @@ namespace InstaLiker.Forms
         {
             InitializeComponent();
         }
+
+        #region IView
 
         public void NavigateToPage(Uri uriTag, out string htmlBody)
         {
@@ -30,7 +33,7 @@ namespace InstaLiker.Forms
                 wcBrowser.Source = uriTag;
                 _isLoadingCompleted = false;
             }
-                
+
             WaitLoading();
 
             htmlBody = GetStringHtmlDoc();
@@ -101,11 +104,8 @@ namespace InstaLiker.Forms
             }
         }
 
-        // загрузка формы
-        private void Main_Load(object sender, EventArgs e)
-        {
-            LoadData();
-        }
+        #endregion
+
 
         // загрузка данных отображающихся на форме
         private void LoadData()
@@ -113,62 +113,6 @@ namespace InstaLiker.Forms
             _facade = new Facade(this, new DataContext());
             gvTags.DataSource = _facade.GetSourceTags;
             wcBrowser.Source = new Uri("https://www.instagram.com/accounts/login/");
-        }
-
-        // вызов настроек
-        private void msiSettings_Click(object sender, EventArgs e)
-        {
-            var setFrm = new SettingsForm(_facade.GetSettMinWaitAfterLike, _facade.GetSettPeriodMinTimer);
-
-            if (setFrm.ShowDialog() != DialogResult.OK)
-                return;
-
-            _facade.UpdateSettings(setFrm.GetSettMinWaitAfterLike, setFrm.GetSettPeriodMinTimer);
-        }
-
-        // вызов статистики
-        private void msiStats_Click(object sender, EventArgs e)
-        {
-            new Statistic(_facade.GetStatistics).ShowDialog();
-        }
-
-        // добавление нового тега
-        private void btnAddTag_Click(object sender, EventArgs e)
-        {
-            var tagFrm = new NewTag();
-
-            if (tagFrm.ShowDialog() != DialogResult.OK)
-                return;
-
-            if (string.IsNullOrWhiteSpace(tagFrm.GetNewTagName))
-                return;
-
-            _facade.AddNewTag(tagFrm.GetNewTagName);
-        }
-
-        // удаление тега
-        private void btnDelTag_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Удалить выбранный тег?", Application.ProductName, MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Question) == DialogResult.Cancel)
-                return;
-
-            _facade.DeleteTag((int) gvTags.SelectedCells[0].Value);
-        }
-
-        // старт процедуры
-        private void btnStart_Click(object sender, EventArgs e)
-        {
-            WaitLoading();
-
-            _facade.StartParser();
-        }
-
-        // остановка процедуры
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            EnableCtrls(false);
-            _facade.StopParser();
         }
 
         // обновление таблицы с данными
@@ -230,18 +174,133 @@ namespace InstaLiker.Forms
             return result;
         }
 
+        #region Events
+
+        // загрузка формы
+        private void Main_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // вызов настроек
+        private void msiSettings_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var setFrm = new SettingsForm(_facade.GetSettMinWaitAfterLike, _facade.GetSettPeriodMinTimer);
+
+                if (setFrm.ShowDialog() != DialogResult.OK)
+                    return;
+
+                _facade.UpdateSettings(setFrm.GetSettMinWaitAfterLike, setFrm.GetSettPeriodMinTimer);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // вызов статистики
+        private void msiStats_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                new Statistic(_facade.GetStatistics).ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // добавление нового тега
+        private void btnAddTag_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var tagFrm = new NewTag();
+
+                if (tagFrm.ShowDialog() != DialogResult.OK)
+                    return;
+
+                if (string.IsNullOrWhiteSpace(tagFrm.GetNewTagName))
+                    return;
+
+                _facade.AddNewTag(tagFrm.GetNewTagName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // удаление тега
+        private void btnDelTag_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MessageBox.Show("Удалить выбранный тег?", Application.ProductName, MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question) == DialogResult.Cancel)
+                    return;
+
+                _facade.DeleteTag((int) gvTags.SelectedCells[0].Value);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // старт процедуры
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                WaitLoading();
+
+                _facade.StartParser();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // остановка процедуры
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                EnableCtrls(false);
+                _facade.StopParser();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         // загрузка браузера окончена
-        private void Awesomium_Windows_Forms_WebControl_LoadingFrameComplete(object sender, Awesomium.Core.FrameEventArgs e)
+        private void Awesomium_Windows_Forms_WebControl_LoadingFrameComplete(object sender, FrameEventArgs e)
         {
             if (e.IsMainFrame)
                 _isLoadingCompleted = true;
         }
 
         // начало загрузки браузера
-        private void Awesomium_Windows_Forms_WebControl_LoadingFrame(object sender, Awesomium.Core.LoadingFrameEventArgs e)
+        private void Awesomium_Windows_Forms_WebControl_LoadingFrame(object sender, LoadingFrameEventArgs e)
         {
             if (e.IsMainFrame)
                 _isLoadingCompleted = false;
         }
+
+        #endregion
     }
 }

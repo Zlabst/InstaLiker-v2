@@ -8,16 +8,23 @@ namespace InstaLiker.Forms
         // заполнение настроек
         public SettingsForm(string minWaitAfterLike, string periodMinTimer)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            if (string.IsNullOrWhiteSpace(minWaitAfterLike))
-                minWaitAfterLike = "1";
+                if (string.IsNullOrWhiteSpace(minWaitAfterLike))
+                    minWaitAfterLike = "1";
 
-            if (string.IsNullOrWhiteSpace(periodMinTimer))
-                periodMinTimer = "5";
+                if (string.IsNullOrWhiteSpace(periodMinTimer))
+                    periodMinTimer = "5";
 
-            numMinWaitAfterLike.Value = int.Parse(minWaitAfterLike);
-            numTimerMinPeriod.Value = int.Parse(periodMinTimer);
+                numMinWaitAfterLike.Value = int.Parse(minWaitAfterLike);
+                numTimerMinPeriod.Value = int.Parse(periodMinTimer);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         // новое значение настройки
